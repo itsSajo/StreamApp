@@ -1,0 +1,17 @@
+{
+  "name": "stream_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sajo",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^3.19.0"
+  },
+  "dependencies": {
+    "jade": "^1.11.0"
+  }
+}
