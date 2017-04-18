@@ -12,6 +12,7 @@
     "eslint": "^3.19.0"
   },
   "dependencies": {
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "socket.io": "^1.7.3"
   }
 }
