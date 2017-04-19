@@ -20,6 +20,14 @@ gulp.task("clean:client", callback => rimraf(".public/build", callback));
 // parallel execution order
 gulp.task("clean", gulp.parallel("clean:server", "clean:client"));
 
+// main development task
+gulp.task("dev", gulp
+  .series(
+    "clean",
+    devServerBuild,
+    gulp.parallel(devServerWatch, devServerReload)
+  ));
+
 // expose private methods to tasks
 gulp.task("dev:server", gulp.series("clean:server", devServerBuild));
 gulp.task("prod:server", gulp.series("clean:server", prodServerBuild));
@@ -41,6 +49,29 @@ function devServerBuild(callback) {
   });
 }
 
+// no callback, becasue we dont want to terminate this
+// watch server.js file and recompile server whenever changes occurs 
+function devServerWatch() {
+  devServerWebpack.watch({}, (error, stats) => {
+    outputWebpack("Dev:Server", error, stats);
+  });
+}
+
+// watch build folder if any changes occurs
+function devServerReload() {
+  return $.nodemon({
+    // executing node file when changes in build folder ocurrs
+    script  : "./build/server.js",
+    watch   : "./build",
+    // passing into script enviroment variables after reload
+    env     : {
+      "NODE_ENV"    : "development",
+      // used in development enviroment - not yet know what this does exactly
+      "USE_WEBPACK" : "true"
+    }
+  });
+}
+
 function prodServerBuild(callback) {
   prodServerWebpack.run((error, stats) => {
     outputWebpack("Prod:Server", error, stats);
@@ -50,7 +81,7 @@ function prodServerBuild(callback) {
 
 // HELPERS
 
-// showing webpack info about process
+// showing webpack info about process in  terminal
 function outputWebpack(label, error, stats) {
 
   // config/webpack related errors
