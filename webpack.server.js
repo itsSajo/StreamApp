@@ -1,6 +1,6 @@
 var path          = require("path");
 var nodeExternals = require('webpack-node-externals');
-var webpack       = require("webpack");
+var webpack       = require("webpack"); // we can use built-in plugins
 
 function createConfig(isDebug) {
   const plugins = [];
@@ -13,17 +13,17 @@ function createConfig(isDebug) {
 
   return {
     // -------------------
-    // WEBPACK CONFIG OBJECT
+    // WEBPACK CONFIG OBJECT START//
 
-    // better output
+    // using enviroment to compile (modules and stuff)
     target    : "node",
-    // in order to ignore all modules in node_modules folde
+    // in order to ignore all modules in node_modules folder when bundling
     externals : [nodeExternals()],
-    // better for debuging, becasue we can see line number of error
+    // for debuging purpose, we can see line of code when error apears
     devtool   : "source-map",
-    // all the processing on the choosen file, bundle and output it
+    // all the processing on the choosen file, bundling and output it
     entry     : "./src/server/server.js",
-    // output destination
+    // output destination path
     output  : {
       path      : path.join(__dirname, "build"),
       filename  : "server.js"
@@ -31,12 +31,13 @@ function createConfig(isDebug) {
     // moduling paths
     resolve : {
       alias : {
-        // when code sees 'shared' will join with path
-        shared : path.join(__dirname, "src/shared")
+        // when code sees 'shared' will join with aboslute path
+        shared : path.resolve(__dirname, "src/shared")
       }
     },
-    // transform files
+    // applied on the source code
     module: {
+      // before bundling pipe it with linter and transpiler
       rules: [
         {
           enforce: "pre",
@@ -51,11 +52,16 @@ function createConfig(isDebug) {
         },
       ],
     },
-    // inject stuff into bundle
+    // inject stuff into bundled modules
     plugins : plugins
     // ----------------------
   };
 }
+  // WEBPACK CONFIG OBJECT END//
 
-// object need to be filled with configuration
-module.exports = createConfig(true);
+// Export function into modules
+
+// for testing purpose -> .bin\webpack --config ./webpack.server
+//module.exports = createConfig(true);
+
+module.exports = createConfig;
