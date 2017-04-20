@@ -5,6 +5,7 @@ import webpack from "webpack";
 import chalk from "chalk";
 import rimraf from "rimraf";
 import createServerConfig  from "./webpack.server"; // importing ConfigFile
+import createClientConfig  from "./webpack.client";
 
 // IIFE returns function so we need to invoke it, so we can use an object
 // with all "gulp-" plugins from package, so we dont need to import them
@@ -21,6 +22,7 @@ gulp.task("clean:client", callback => rimraf(".public/build", callback));
 gulp.task("clean", gulp.parallel("clean:server", "clean:client"));
 
 // main development task
+gulp.task("dev:server", gulp.series("clean:server", devServerBuild));
 gulp.task("dev", gulp
   .series(
     "clean",
@@ -29,8 +31,18 @@ gulp.task("dev", gulp
   ));
 
 // expose private methods to tasks
-gulp.task("dev:server", gulp.series("clean:server", devServerBuild));
 gulp.task("prod:server", gulp.series("clean:server", prodServerBuild));
+gulp.task("prod:client", gulp.series("clean:client", prodClientBuild));
+gulp.task("prod", gulp.series("clean", gulp.parallel(prodServerBuild, prodClientBuild)));
+////////////// PRIVATE CLIENT TASK //////////////////
+
+function prodClientBuild(callback) {
+  const compiler = webpack(createClientConfig(false));
+  compiler.run((err, stats) => {
+    outputWebpack("Prod:Client", err, stats);
+    callback();
+  });
+}
 
 ////////////// PRIVATE SERVER TASK //////////////////
 
@@ -50,7 +62,7 @@ function devServerBuild(callback) {
 }
 
 // no callback, becasue we dont want to terminate this
-// watch server.js file and recompile server whenever changes occurs 
+// watch server.js file and recompile server whenever changes occurs
 function devServerWatch() {
   devServerWebpack.watch({}, (error, stats) => {
     outputWebpack("Dev:Server", error, stats);

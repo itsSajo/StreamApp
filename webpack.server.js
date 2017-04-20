@@ -1,3 +1,6 @@
+// server app weback configuration
+
+
 var path          = require("path");
 var nodeExternals = require('webpack-node-externals');
 var webpack       = require("webpack"); // we can use built-in plugins
