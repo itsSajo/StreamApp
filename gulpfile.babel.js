@@ -77,6 +77,7 @@ function devServerReload() {
     watch   : "./build",
     // passing into script enviroment variables after reload
     env     : {
+      // configure enviroment process when starting/restarting server
       "NODE_ENV"    : "development",
       // used in development enviroment - not yet know what this does exactly
       "USE_WEBPACK" : "true"

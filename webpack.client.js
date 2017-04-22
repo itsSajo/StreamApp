@@ -75,8 +75,13 @@ function createConfig(isDebug) {
       fallback: 'style-loader',
       use: ['css-loader', 'sass-loader']
     });
+    // esle in dev mode
   } else {
-
+    // replace modules when in runtime -> injecting client.js into our app
+    // and graph their dependencies into one "chunk".
+    // the last one is exported
+    plugins.push(new webpack.HotModuleReplacementPlugin());
+    appEntry.splice(0, 0, "webpack-hot-middleware/client");
   }
 
   return {
@@ -94,14 +99,14 @@ function createConfig(isDebug) {
       // webpack template syntax. File will be named after entry property.
       filename   : "[name].js",
       // browser will see this bundle and use it
-      // every urls that webpack encounters will be re-written with /build/ in
-      // public folder (used by express to stock static files)
+      // every urls that webpack encounters will be re-written with /build/ in url
+      // Where you uploaded your bundled files we dont need to src="path/pic.jpg", just "pic.jpg"
       publicPath : "/build/"
     },
     resolve : {
       alias : {
         // when code sees 'shared' will join with aboslute path
-        shared : path.resolve(__dirname, "src/shared")
+        shared : path.join(dirname, "src", "shared")
       }
     },
     module: {
