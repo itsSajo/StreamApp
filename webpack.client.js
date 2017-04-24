@@ -127,13 +127,35 @@ function createConfig(isDebug) {
         // so it will prevent browser using cached file when we add new file
 
         {
-          test    : /\.(png|jpg|jpeg|gif|woff|tff|eot|svg|woff2)/,
+          test    : /\.(png|jpg|jpeg|gif|)$/,
           exclude : "/node_modules/",
           // to prevent web requests from goin for small files we can inline it into css
           // example unicoded 64 base images
           // file-loader will be used if output bigget than limit size
-          loader  : "url-loader?limit=1024"
+          loader  : "url-loader?limit=10000"
         },
+
+        // problems wth compiling extension of font-awesome url
+        {
+          test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 10000,
+                mimetype: 'application/font-woff'
+              }
+            }
+          ]
+        },
+
+        {
+          test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          use: [
+            { loader: 'file-loader' }
+          ]
+        },
+
         cssLoader,
         sassLoader
       ]
