@@ -12,8 +12,9 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 // -----------------------------------------
 // SETUP
 const app = express();
+const port = process.env.PORT || 3000;
 const server = new http.Server(app);
-const io = socketIo(server);
+const io = new socketIo(server);
 
 // -----------------------------------------
 // Client webpack
@@ -48,7 +49,7 @@ if (process.env.USE_WEBPACK === "true") {
       version : false
     }
   }));
-  // hot reloading into an existing server 
+  // hot reloading into an existing server
   app.use(webpackHotMiddleware(compiler));
   console.log(chalk.bgRed("Using WDM! Dev Only!"));
 }
@@ -71,17 +72,16 @@ app.get("/", (req, res) => {
 
 // -----------------------------------------
 // Socket
-io.on("connection", (socket) => {
-  console.log(`Got connection from ${socket.request.connection.remoteAdress}`);
+io.on("connection", () => {
+  console.log("User Connected");
 });
 
 // -----------------------------------------
-// Startup
-const port = process.env.PORT || 3000;
+
 
 // in future we will have a startup process
 function startServer() {
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Started Server on ${port}`);
   });
 }

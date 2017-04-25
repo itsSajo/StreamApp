@@ -3,7 +3,7 @@ var path              = require("path");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 // 3rd party vendors
-const vendorModules = ["jquery", "lodash"];
+const vendorModules = ["jquery", "lodash", "socket.io-client", "rxjs"];
 
 // fix odity with webpack
 const dirname = path.resolve("./");
@@ -98,7 +98,7 @@ function createConfig(isDebug) {
       path       : path.join(dirname, "public", "build"),
       // webpack template syntax. File will be named after entry property.
       filename   : "[name].js",
-      // browser will see this bundle and use it
+      // webserver will request /build/ folder which takes webpack files from public/build
       // every urls that webpack encounters will be re-written with /build/ in url
       // Where you uploaded your bundled files we dont need to src="path/pic.jpg", just "pic.jpg"
       publicPath : "/build/"
