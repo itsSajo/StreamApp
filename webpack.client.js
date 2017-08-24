@@ -79,7 +79,7 @@ function createConfig(isDebug) {
   } else {
     // replace modules when in runtime -> injecting client.js into our app
     // and graph their dependencies into one "chunk".
-    // the last one is exported
+    // HMR is capable of not making static files!!!
     plugins.push(new webpack.HotModuleReplacementPlugin());
     appEntry.splice(0, 0, "webpack-hot-middleware/client");
   }
@@ -87,6 +87,8 @@ function createConfig(isDebug) {
   return {
     // -------------------
     // WEBPACK CONFIG OBJECT START//
+
+    // eval is like react - only update specific dirty module 
     devtool : devTool,
     // using object on entry property so we can process on multiple files
     entry   : {

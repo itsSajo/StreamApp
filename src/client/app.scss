@@ -38,7 +38,7 @@ body {
   // height includes borders of wrapper so border will go away
   box-sizing: border-box;
 
-  // direct selecting (descending) under site wrap
+  // direct selecting childs (descending) under site wrap class div
   > .column {
     display: flex;
     flex-grow: 1;

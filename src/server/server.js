@@ -6,6 +6,18 @@ import http from "http";
 import socketIo from "socket.io";
 import chalk from "chalk";
 
+import { Observable } from 'rxjs';
+
+// just exe file so it will be in rx.prototype
+import "shared/operators";
+
+// shared pub/sub object for emiting and receiving emits
+import {ObservableSocket } from "shared/observable-socket";
+
+import { UsersModule } from "./modules/users";
+import { PlaylistModule } from "./modules/playlist";
+import { ChatModule } from "./modules/chat";
+
 // when we in dev mode we will use hotpack middleware
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -66,16 +78,40 @@ app.get("/", (req, res) => {
   });
 });
 // -----------------------------------------
-// Modules
-
+// Services
+const videoServices = [];
+const playlistRepository = {};
 
 
 // -----------------------------------------
-// Socket
-io.on("connection", () => {
-  console.log("User Connected");
-});
+// -----------------------------------------
+// Modules
 
+// creating instances of modules and Injecting Dependency and map then to array
+const users = new UsersModule(io);
+const chat = new ChatModule(io, users);
+const playlist = new PlaylistModule(io, users, playlistRepository, videoServices);
+const modules = [users, chat, playlist];
+
+// -----------------------------------------
+// Socket
+// listen on the connection event for incoming sockets (a listener for clients to connect)
+io.on("connection", (socket) => {
+  console.log("User Connected");
+
+  // this will create another stream (with ) from client's emited stream with values
+  // onActions will receive emit action from client side
+  const client = new ObservableSocket(socket);
+
+  // register client with all modules
+  // client gets their APIs
+  for(let mod of modules)
+    mod.registerClient(client);
+
+  // tell all modules client is registered
+  for(let mod of modules)
+    mod.clientRegistered(client);
+});
 // -----------------------------------------
 
 
@@ -86,4 +122,15 @@ function startServer() {
   });
 }
 
-startServer();
+// merge in stream all init (observer.empty) functions
+// they might be async so we use stream
+Observable.merge(...modules.map(m => m.init$()))
+  .subscribe({
+    complete() {
+      startServer();
+    },
+
+    error(error) {
+      console.error(`Could not init module: ${error.stack || error}`);
+    }
+  });
