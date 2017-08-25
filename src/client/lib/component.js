@@ -27,7 +27,7 @@ export class ComponentBase {
     for(let handler of this._onDetachHandlers)
       handler();
 
-    for(let child of this._onDetach)
+    for(let child of this.children)
       child.detach();
 
     this._onDetachHandlers = [];

@@ -56,6 +56,15 @@ export class UsersStore {
     // when client will connect to server, server commit new server list
     this._server.on("connect", () => {
       this._server.emit("users:list");
+
+      // if user is not logged in
+      if(!this.isLoggedIn)
+        return;
+
+      this.login$(this._currentUser.name).subscribe(
+        user => console.log(`Logged in again as ${user.name}`),
+        error => alert(`Could not log back in ${error.message || "Uknown Error"}`)
+      );
     });
   }
 

@@ -12,7 +12,7 @@ export class Validator {
   }
 
   error(message) {
-    this._erros.push(message);
+    this._errors.push(message);
   }
 
   // returning erros with messages

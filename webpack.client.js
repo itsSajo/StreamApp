@@ -3,7 +3,7 @@ var path              = require("path");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 // 3rd party vendors
-const vendorModules = ["jquery", "lodash", "socket.io-client", "rxjs"];
+const vendorModules = ["jquery", "lodash", "socket.io-client", "rxjs", "moment"];
 
 // fix odity with webpack
 const dirname = path.resolve("./");
@@ -88,7 +88,7 @@ function createConfig(isDebug) {
     // -------------------
     // WEBPACK CONFIG OBJECT START//
 
-    // eval is like react - only update specific dirty module 
+    // eval is like react - only update specific dirty module
     devtool : devTool,
     // using object on entry property so we can process on multiple files
     entry   : {
